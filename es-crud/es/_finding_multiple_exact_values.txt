@@ -1,0 +1,315 @@
+https://www.elastic.co/guide/cn/elasticsearch/guide/cn/_dealing_with_null_values.html
+
+POST /my_store/products/_bulk
+{ "index": { "_id": 1 }}
+{ "price" : 10, "productID" : "XHDK-A-1293-#fJ3" }
+{ "index": { "_id": 2 }}
+{ "price" : 20, "productID" : "KDKE-B-9947-#kL5" }
+{ "index": { "_id": 3 }}
+{ "price" : 30, "productID" : "JODL-X-1937-#pV7" }
+{ "index": { "_id": 4 }}
+{ "price" : 30, "productID" : "QQPX-R-3956-#aD8" }
+
+
+GET /my_store/products/_search
+
+GET my_store/products/_search
+{
+  "query": {
+    "match": {
+      "price": 20
+    }
+  }
+}
+
+GET my_store/products/_search
+{
+  "query": {
+    "term": {
+      "price": {
+        "value": 20
+      }
+    }
+  }
+}
+
+
+GET my_store/products/_search
+{
+  "query": {
+    "constant_score": {
+      "filter": {
+        "term": {
+          "price": "20"
+        }
+      }
+    }
+  }
+}
+
+
+GET my_store/products/_search
+{
+  "query": {
+    "constant_score": {
+      "filter": {
+        "term": {
+          "productID": "KDKE-B-9947-#kL5"
+        }
+      }
+    }
+  }
+}
+
+GET /my_store/_analyze
+{
+  "field": "productID",
+  "text": "XHDK-A-1293-#fJ3"
+}
+
+
+DELETE /my_store
+
+PUT /my_store
+{
+  "mappings": {
+    "products": {
+      "properties": {
+        "productID":{
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+GET my_store/_mapping
+
+
+POST /my_store/products/_bulk
+{ "index": { "_id": 1 }}
+{ "price" : 10, "productID" : "XHDK-A-1293-#fJ3" }
+{ "index": { "_id": 2 }}
+{ "price" : 20, "productID" : "KDKE-B-9947-#kL5" }
+{ "index": { "_id": 3 }}
+{ "price" : 30, "productID" : "JODL-X-1937-#pV7" }
+{ "index": { "_id": 4 }}
+{ "price" : 30, "productID" : "QQPX-R-3956-#aD8" }
+
+
+GET my_store/products/_mapping
+
+GET /my_store/products/_search
+{
+    "query" : {
+        "constant_score" : {
+            "filter" : {
+                "term" : {
+                    "productID" : "XHDK-A-1293-#fJ3"
+                }
+            }
+        }
+    }
+}
+
+
+GET /my_store/products/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "price": 20
+          }
+        },
+        {
+          "term": {
+            "productID": "XHDK-A-1293-#fJ3"
+          }
+        }
+      ],
+      "must_not": {
+        "term": {
+          "price": 30
+        }
+      }
+    }
+  }
+}
+
+#SELECT document
+#FROM   products
+#WHERE  productID      = "KDKE-B-9947-#kL5"
+#  OR (     productID = "JODL-X-1937-#pV7"
+#       AND price     = 30 )
+
+
+GET my_store/products/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "productID": "KDKE-B-9947-#kL5"
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "productID": "JODL-X-1937-#pV7"
+                }
+              },
+              {
+                "term": {
+                  "price": {
+                    "value": 30
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET /my_store/products/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "productID": "KDKE-B-9947-#kL5"
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "productID": "JODL-X-1937-#pV7"
+                }
+              },
+              {
+                "term": {
+                  "price": 30
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET my_store/products/_search
+{
+  "query": {
+    "terms": {
+      "price": [
+        20,
+        30
+      ]
+    }
+  }
+}
+
+
+GET my_store/products/_search
+{
+  "query": {
+    "constant_score": {
+      "filter": {
+        "terms": {
+          "price": [
+            20,
+            30
+          ]
+        }
+      },
+      "boost": 1.2
+    }
+  }
+}
+
+
+GET my_store/products/_search
+{
+  "query": {
+    "range": {
+      "price": {
+        "gte": 20,
+        "lte": 30
+      }
+    }
+  }
+}
+
+
+POST /my_index/posts/_bulk
+{
+  "index": {
+    "_id": "1"
+  }
+}
+{
+  "tags": [
+    "search"
+  ]
+}
+{
+  "index": {
+    "_id": "2"
+  }
+}
+{
+  "tags": [
+    "search",
+    "open_source"
+  ]
+}
+{
+  "index": {
+    "_id": "3"
+  }
+}
+{
+  "other_field": "some data"
+}
+{
+  "index": {
+    "_id": "4"
+  }
+}
+{
+  "tags": null
+}
+{
+  "index": {
+    "_id": "5"
+  }
+}
+{
+  "tags": [
+    "search",
+    null
+  ]
+}
+
+
+GET my_index/posts/_mapping
+
+
+
+
+

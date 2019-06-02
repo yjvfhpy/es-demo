@@ -1,0 +1,14 @@
+server:
+  port: 8020
+
+spring:
+  data:
+    elasticsearch:
+      cluster-nodes: 127.0.0.1:9300
+      #cluster-nodes: 192.168.40.232:9300
+      repositories:
+        enabled: true
+      cluster-name: wlas-elasticsearch
+logging:
+  level:
+    com.majie: debug

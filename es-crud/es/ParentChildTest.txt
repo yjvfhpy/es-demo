@@ -1,0 +1,128 @@
+ref:https://www.cnblogs.com/gmhappy/p/9472372.html
+
+https://www.cnblogs.com/xiaoxiaoliu/p/9916472.html
+
+https://blog.csdn.net/lijingyao8206/article/details/78614536
+
+
+PUT /company
+{
+   "mappings": {
+        "branch": {},
+         "employee": {
+             "_parent": {
+                  "type": "branch"
+              }
+         }
+     }
+}
+
+GET /company/branch/_mapping
+GET /company/employee/_mapping
+
+POST /company/branch/_bulk
+{ "index": { "_id": "london" }}
+{ "name": "London Westminster", "city": "London", "country": "UK" }
+{ "index": { "_id": "liverpool" }}
+{ "name": "Liverpool Central", "city": "Liverpool", "country": "UK" }
+{ "index": { "_id": "paris" }}
+{ "name": "Champs Élysées", "city": "Paris", "country": "France" }
+
+GET /company/_search
+
+
+PUT /company/employee/1?parent=london
+{
+  "name":  "Alice Smith",
+  "dob":   "1970-10-24",
+  "hobby": "hiking"
+}
+
+
+POST /company/employee/_bulk
+{ "index": { "_id": 2, "parent": "london" }}
+{ "name": "Mark Thomas", "dob": "1982-05-16", "hobby": "diving" }
+{ "index": { "_id": 3, "parent": "liverpool" }}
+{ "name": "Barry Smith", "dob": "1979-04-01", "hobby": "hiking" }
+{ "index": { "_id": 4, "parent": "paris" }}
+{ "name": "Adrien Grand", "dob": "1987-05-11", "hobby": "horses" }
+
+
+
+GET /company/branch/_search
+{
+  "query": {
+    "has_child": {
+      "type": "employee",
+      "query": {
+        "range": {
+          "dob": {
+            "gte": "1980-01-01"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /company/branch/_search
+{
+  "query": {
+    "has_child": {
+      "type":       "employee",
+      "score_mode": "max",
+      "query": {
+        "match": {
+          "name": "Alice Smith"
+        }
+      }
+    }
+  }
+}
+
+
+
+###################
+通过 child 找到 parents
+查询child返回的是parents文档
+
+查询child中的hobby为 "hiking"的员工和所在部门
+GET /company/branch/_search
+{
+  "query": {
+    "has_child": {
+      "type": "employee",
+      "query": {
+        "match": {
+          "hobby": "hiking"
+        }
+      },"inner_hits":{}
+    }
+  }
+}
+
+GET company/employee/_search
+{
+  "query": {
+    "match": {
+      "hobby": "hiking"
+    }
+  }
+}
+
+
+GET company/branch/_search
+{
+  "query": {
+    "has_child": {
+      "type": "employee",
+      "score_mode": "max",
+      "query": {
+        "match": {
+          "hobby": "hiking"
+        }
+      },"inner_hits":{}
+    }
+  }
+}
