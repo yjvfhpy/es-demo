@@ -4,11 +4,11 @@ server:
 spring:
   data:
     elasticsearch:
-      cluster-nodes: 127.0.0.1:9300
-      #cluster-nodes: 192.168.40.232:9300
+      #cluster-nodes: 127.0.0.1:9300
+      cluster-nodes: 192.168.0.108:9300
       repositories:
         enabled: true
-      cluster-name: wlas-elasticsearch
+      cluster-name: my-application
 logging:
   level:
     com.majie: debug

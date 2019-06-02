@@ -21,6 +21,7 @@
     <modules>
         <module>es-analysis</module>
         <module>es-crud</module>
+        <module>es-query</module>
     </modules>
 
     <properties>
